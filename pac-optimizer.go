@@ -36,6 +36,12 @@ Description:
 `
 )
 
+var (
+	emptyLinesRegex_CRLF = regexp.MustCompile(`(\r\n\r\n)(\r\n)+`)
+	emptyLinesRegex_CR = regexp.MustCompile(`(\r\r)(\r)+`)
+	emptyLinesRegex_LF = regexp.MustCompile(`(\n\n)(\n)+`)
+)
+
 func main() {
     fmt.Println(logo)
 		
@@ -109,9 +115,6 @@ func optimizePAC(content string) string {
 	// Split the content into lines while preserving the original line endings
 	lines := strings.Split(content, lineEnding)
 	var optimizedLines []string
-	emptyLinesRegex_CRLF := regexp.MustCompile(`(\r\n\r\n)(\r\n)+`)
-	emptyLinesRegex_CR := regexp.MustCompile(`(\r\r)(\r)+`)
-	emptyLinesRegex_LF := regexp.MustCompile(`(\n\n)(\n)+`)
 
 	// Process each line individually
 	for i := 0; i < len(lines); i++ {
