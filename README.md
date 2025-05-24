@@ -18,7 +18,7 @@ A simple command-line utility written in Go to optimize PAC (Proxy Auto-Config) 
 ```bash
 git clone https://github.com/mintomohan/pac-optimizer.git
 cd pac-optimizer
-go build -o pac-optimizer
+go build pac-optimizer.go
 ```
 
 ### Or install directly
