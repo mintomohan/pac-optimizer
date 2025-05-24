@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
@@ -77,7 +76,7 @@ func main() {
 	}
 
 	// Read input file
-	content, err := ioutil.ReadFile(inputFile)
+	content, err := os.ReadFile(inputFile)
 	if err != nil {
 		fmt.Printf("Error reading input file: %v\n", err)
 		os.Exit(1)
@@ -87,7 +86,7 @@ func main() {
 	optimizedContent := optimizePAC(string(content))
 
 	// Write optimized content to output file
-	err = ioutil.WriteFile(outputFile, []byte(optimizedContent), 0644)
+	err = os.WriteFile(outputFile, []byte(optimizedContent), 0644)
 	if err != nil {
 		fmt.Printf("Error writing to output file: %v\n", err)
 		os.Exit(1)
@@ -110,6 +109,9 @@ func optimizePAC(content string) string {
 	// Split the content into lines while preserving the original line endings
 	lines := strings.Split(content, lineEnding)
 	var optimizedLines []string
+	emptyLinesRegex_CRLF := regexp.MustCompile(`(\r\n\r\n)(\r\n)+`)
+	emptyLinesRegex_CR := regexp.MustCompile(`(\r\r)(\r)+`)
+	emptyLinesRegex_LF := regexp.MustCompile(`(\n\n)(\n)+`)
 
 	// Process each line individually
 	for i := 0; i < len(lines); i++ {
@@ -153,16 +155,13 @@ func optimizePAC(content string) string {
 	// 3. Replace multiple consecutive empty lines with a single empty line
 	if lineEnding == "\r\n" {
 		// For Windows (CRLF)
-		emptyLinesRegex := regexp.MustCompile(`(\r\n\r\n)(\r\n)+`)
-		content = emptyLinesRegex.ReplaceAllString(content, "\r\n\r\n")
+		content = emptyLinesRegex_CRLF.ReplaceAllString(content, "\r\n\r\n")
 	} else if lineEnding == "\r" {
 		// For old Mac (CR)
-		emptyLinesRegex := regexp.MustCompile(`(\r\r)(\r)+`)
-		content = emptyLinesRegex.ReplaceAllString(content, "\r\r")
+		content = emptyLinesRegex_CR.ReplaceAllString(content, "\r\r")
 	} else {
 		// For Unix/Linux (LF)
-		emptyLinesRegex := regexp.MustCompile(`(\n\n)(\n)+`)
-		content = emptyLinesRegex.ReplaceAllString(content, "\n\n")
+		content = emptyLinesRegex_LF.ReplaceAllString(content, "\n\n")
 	}
 
 	return content
