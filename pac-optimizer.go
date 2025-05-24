@@ -24,7 +24,7 @@ Arguments:
 Description:
   PAC File Optimizer removes comments, empty spaces, and blank lines from a PAC file.
 `
-    logo = `
+	logo = `
   _____        _____    ____        _   _           _              
  |  __ \ /\   / ____|  / __ \      | | (_)         (_)             
  | |__) /  \ | |      | |  | |_ __ | |_ _ _ __ ___  _ _______ _ __ 
@@ -38,13 +38,13 @@ Description:
 
 var (
 	emptyLinesRegex_CRLF = regexp.MustCompile(`(\r\n\r\n)(\r\n)+`)
-	emptyLinesRegex_CR = regexp.MustCompile(`(\r\r)(\r)+`)
-	emptyLinesRegex_LF = regexp.MustCompile(`(\n\n)(\n)+`)
+	emptyLinesRegex_CR   = regexp.MustCompile(`(\r\r)(\r)+`)
+	emptyLinesRegex_LF   = regexp.MustCompile(`(\n\n)(\n)+`)
 )
 
 func main() {
-    fmt.Println(logo)
-		
+	fmt.Println(logo)
+
 	// Define flags
 	showVersion := flag.Bool("version", false, "Show version information")
 	showHelp := flag.Bool("help", false, "Show help message")
@@ -119,7 +119,7 @@ func optimizePAC(content string) string {
 	// Process each line individually
 	for i := 0; i < len(lines); i++ {
 		line := lines[i]
-		
+
 		// 1. Remove comments, but be careful with URLs
 		// Look for "//" that is not part of a URL (not preceded by ":" or "/")
 		commentStart := -1
@@ -135,26 +135,26 @@ func optimizePAC(content string) string {
 				break
 			}
 		}
-		
+
 		// Remove the comment if found
 		if commentStart >= 0 {
 			line = line[:commentStart]
 		}
-		
+
 		// 2. Check if the line is empty or contains only whitespace
 		if strings.TrimSpace(line) == "" {
 			// Line is empty or contains only whitespace, remove it completely
 			line = ""
 		}
 		// Note: we don't trim trailing spaces from lines with content
-		
+
 		// Add the processed line to our result (even if empty)
 		optimizedLines = append(optimizedLines, line)
 	}
 
 	// Join the lines back together with the original line ending
 	content = strings.Join(optimizedLines, lineEnding)
-	
+
 	// 3. Replace multiple consecutive empty lines with a single empty line
 	if lineEnding == "\r\n" {
 		// For Windows (CRLF)
